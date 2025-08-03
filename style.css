@@ -22,7 +22,7 @@ h1 {
 .button-group {
   display: flex;
   justify-content: center;
-  gap: 15px;
+  gap: 10px;
   margin-bottom: 30px;
   flex-wrap: wrap;
 }
@@ -31,7 +31,7 @@ button {
   background-color: #1d899b;
   color: white;
   border: none;
-  padding: 15px 25px;
+  padding: 12px 20px;
   font-size: 16px;
   border-radius: 8px;
   cursor: pointer;
@@ -102,6 +102,12 @@ button:hover {
 .queue-list li:last-child {
   border-bottom: none;
 }
+
+.queue-time {
+  font-size: 13px;
+  color: #999;
+}
+
 .tanggal-jam {
   text-align: center;
   margin-bottom: 20px;
@@ -112,9 +118,4 @@ button:hover {
   margin: 4px;
   font-size: 16px;
   font-weight: bold;
-}
-
-.queue-time {
-  font-size: 13px;
-  color: #999;
 }
