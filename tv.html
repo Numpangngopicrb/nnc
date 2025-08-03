@@ -11,35 +11,85 @@
       font-family: 'Segoe UI', sans-serif;
       text-align: center;
       padding: 30px;
+      overflow: hidden;
     }
+
     h1 {
       font-size: 48px;
       margin-bottom: 10px;
     }
+
+    .marquee {
+      width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      box-sizing: border-box;
+      margin: 10px 0 30px 0;
+    }
+
+    .marquee span {
+      display: inline-block;
+      padding-left: 100%;
+      animation: marquee 35s linear infinite;
+      font-size: 22px;
+      color: #fff8dc;
+    }
+
+    @keyframes marquee {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-100%); }
+    }
+
     h2 {
       font-size: 36px;
-      margin-top: 40px;
+      margin-top: 30px;
       margin-bottom: 10px;
     }
+
     .nomor {
       font-size: 120px;
       font-weight: bold;
       margin: 20px 0;
+      animation: fadeInScale 0.5s ease-in-out;
     }
-    .jam {
+
+    @keyframes fadeInScale {
+      0% {
+        opacity: 0;
+        transform: scale(0.6);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .sisa {
       font-size: 28px;
-      margin-top: 50px;
+      margin-top: -10px;
+    }
+
+    .jam {
+      font-size: 26px;
+      margin-top: 40px;
     }
   </style>
 </head>
 <body>
   <h1>ANTRIAN NUMPANG NGOPI.CRB</h1>
 
-  <h2>SEDANG DILAYANI</h2>
+  <div class="marquee">
+    <span>
+      ☕️ Selamat Nongkrong di Numpang Ngopi.Crb — Tempat Rasa Jadi Cerita! &nbsp; 🎉 Antrian santai, kopi nikmat. Sabar ya, bro-sis! &nbsp; 📢 Mokachino & Kopi Aren jadi andalan, udah coba belum? &nbsp; 💬 Satu teguk, satu tawa, penuh makna! &nbsp; 📸 Tag kami di Instagram @numpangngopi.crb, biar makin hits! &nbsp; 🔥 Santai dulu, antrian jalan terus. Nongkrong sambil ngopi yesss! &nbsp; 🍃 Ngopi bukan cuma soal rasa, tapi juga suasana. &nbsp; 🎶 Musik enak, kopi mantap, tongkrongan jalan terus! &nbsp; 💡 Tips hari ini: Jangan buru-buru. Nikmati aja suasananya! &nbsp; 🕰️ Buka dari jam 18.00 s/d 22.30 WIB – Jangan telat ya!
+    </span>
+  </div>
+
+  <h2>Antrian yang Dilayani</h2>
   <div class="nomor" id="antrianSaatIni">-</div>
 
-  <h2>ANTRIAN BERIKUTNYA</h2>
+  <h2>Antrian Berikutnya</h2>
   <div class="nomor" id="antrianSelanjutnya">-</div>
+  <div class="sisa" id="sisaAntrian">Sisa Antrian: -</div>
 
   <div class="jam" id="jamTanggal"></div>
 
@@ -55,9 +105,14 @@
 
     const currentEl = document.getElementById("antrianSaatIni");
     const nextEl = document.getElementById("antrianSelanjutnya");
+    const sisaEl = document.getElementById("sisaAntrian");
 
     db.ref("antrian/saatIni").on("value", (snap) => {
-      currentEl.textContent = snap.val() || "-";
+      const val = snap.val() || "-";
+      currentEl.textContent = val;
+      currentEl.classList.remove("nomor");
+      void currentEl.offsetWidth; // force reflow
+      currentEl.classList.add("nomor");
     });
 
     db.ref("antrian/queue").on("value", (snap) => {
@@ -69,8 +124,10 @@
         } else {
           nextEl.textContent = "-";
         }
+        sisaEl.textContent = `Sisa Antrian: ${queue.length} lagi`;
       } else {
         nextEl.textContent = "-";
+        sisaEl.textContent = "Sisa Antrian: 0";
       }
     });
 
