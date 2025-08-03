@@ -8,14 +8,23 @@
 </head>
 <body>
   <div class="container">
+    <!-- Tanggal dan Jam -->
+    <div class="tanggal-jam">
+      <p id="tanggal"></p>
+      <p id="jam"></p>
+    </div>
+
     <h1>Selamat Datang di Numpang Ngopi.Crb</h1>
 
+    <!-- Tombol Aksi -->
     <div class="button-group">
       <button id="ambilAntrianBtn">AMBIL ANTRIAN BARU</button>
       <button id="prosesAntrianBtn">PROSES ANTRIAN</button>
       <button id="selesaiBtn">SELESAI</button>
+      <button id="resetBtn">RESET ANTRIAN</button>
     </div>
 
+    <!-- Informasi Antrian -->
     <div class="info-box">
       <div class="info-card">
         <h2>Antrian yang Dilayani</h2>
@@ -27,7 +36,7 @@
       </div>
     </div>
 
-    <!-- Tambahan: Daftar Antrian Menunggu -->
+    <!-- Daftar Antrian Menunggu -->
     <div class="queue-list">
       <h2>Antrian Menunggu</h2>
       <ul id="daftarAntrian"></ul>
