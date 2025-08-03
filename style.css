@@ -102,6 +102,17 @@ button:hover {
 .queue-list li:last-child {
   border-bottom: none;
 }
+.tanggal-jam {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #1d899b;
+}
+
+.tanggal-jam p {
+  margin: 4px;
+  font-size: 16px;
+  font-weight: bold;
+}
 
 .queue-time {
   font-size: 13px;
