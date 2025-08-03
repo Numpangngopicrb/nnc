@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Antrian Numpang Ngopi.crb</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Selamat Datang di Numpang Ngopi.Crb</h1>
+
+    <div class="button-group">
+      <button id="ambilAntrianBtn">AMBIL ANTRIAN BARU</button>
+      <button id="prosesAntrianBtn">PROSES ANTRIAN</button>
+      <button id="selesaiBtn">SELESAI</button>
+    </div>
+
+    <div class="info-box">
+      <div class="info-card">
+        <h2>Antrian yang Dilayani</h2>
+        <p id="antrianSaatIni">-</p>
+      </div>
+      <div class="info-card">
+        <h2>Antrian Selesai</h2>
+        <p id="antrianSelesai">-</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
