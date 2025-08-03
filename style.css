@@ -69,3 +69,41 @@ button:hover {
   margin: 0;
   color: #333;
 }
+
+.queue-list {
+  margin-top: 30px;
+  text-align: left;
+}
+
+.queue-list h2 {
+  color: #1d899b;
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.queue-list ul {
+  list-style: none;
+  padding: 0;
+  max-height: 250px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: #fdfdfd;
+}
+
+.queue-list li {
+  padding: 10px 15px;
+  border-bottom: 1px solid #eee;
+  color: #333;
+  display: flex;
+  justify-content: space-between;
+}
+
+.queue-list li:last-child {
+  border-bottom: none;
+}
+
+.queue-time {
+  font-size: 13px;
+  color: #999;
+}
