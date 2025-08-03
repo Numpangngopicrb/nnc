@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TV Antrian - Numpang Ngopi.crb</title>
+  <style>
+    body {
+      background-color: #1d899b;
+      color: #ffffff;
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      padding: 30px;
+    }
+    h1 {
+      font-size: 48px;
+      margin-bottom: 10px;
+    }
+    h2 {
+      font-size: 36px;
+      margin-top: 40px;
+      margin-bottom: 10px;
+    }
+    .nomor {
+      font-size: 120px;
+      font-weight: bold;
+      margin: 20px 0;
+    }
+    .jam {
+      font-size: 28px;
+      margin-top: 50px;
+    }
+  </style>
+</head>
+<body>
+  <h1>ANTRIAN NUMPANG NGOPI.CRB</h1>
+
+  <h2>SEDANG DILAYANI</h2>
+  <div class="nomor" id="antrianSaatIni">-</div>
+
+  <h2>ANTRIAN BERIKUTNYA</h2>
+  <div class="nomor" id="antrianSelanjutnya">-</div>
+
+  <div class="jam" id="jamTanggal"></div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <script>
+    const firebaseConfig = {
+      databaseURL: "https://antrian-kedai-default-rtdb.asia-southeast1.firebasedatabase.app/"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const currentEl = document.getElementById("antrianSaatIni");
+    const nextEl = document.getElementById("antrianSelanjutnya");
+
+    db.ref("antrian/saatIni").on("value", (snap) => {
+      currentEl.textContent = snap.val() || "-";
+    });
+
+    db.ref("antrian/queue").on("value", (snap) => {
+      const data = snap.val();
+      if (data) {
+        const queue = Object.values(data);
+        if (queue.length > 0) {
+          nextEl.textContent = queue[0].nomor;
+        } else {
+          nextEl.textContent = "-";
+        }
+      } else {
+        nextEl.textContent = "-";
+      }
+    });
+
+    function updateTime() {
+      const now = new Date();
+      const jam = now.toLocaleTimeString('id-ID');
+      const tanggal = now.toLocaleDateString('id-ID', {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+      });
+      document.getElementById("jamTanggal").textContent = `${tanggal} | ${jam}`;
+    }
+
+    setInterval(updateTime, 1000);
+    updateTime();
+  </script>
+</body>
+</html>
