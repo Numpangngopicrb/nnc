@@ -1,51 +1,320 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Antrian Numpang Ngopi.crb</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Numpang Ngopi.CRB — Menu & Transaksi</title>
+  <meta name="description" content="Menu & transaksi Numpang Ngopi.CRB — responsive, mobile friendly, cetak struk" />
+  <style>
+    :root{
+      --bg:#f5f6f7; /* very light gray */
+      --card:#ffffff;
+      --muted:#9aa0a6;
+      --accent:#111111; /* black */
+      --border: #e3e5e7;
+      --shadow: 0 6px 18px rgba(16,22,26,0.08);
+      font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; background:linear-gradient(180deg,var(--bg),#ffffff 60%); color:var(--accent);
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+      padding:18px; font-size:16px;
+    }
+    header{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+    .logo{width:56px;height:56px;background:#111;border-radius:12px;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:18px}
+    h1{margin:0;font-size:18px}
+    p.lead{margin:0;color:var(--muted);font-size:13px}
+
+    .container{max-width:980px;margin:0 auto;display:grid;grid-template-columns:1fr 360px;gap:14px}
+    @media (max-width:880px){.container{grid-template-columns:1fr} .sidebar{order:2}}
+
+    /* MENU CARD */
+    .card{background:var(--card);border-radius:14px;padding:14px;box-shadow:var(--shadow);border:1px solid var(--border)}
+    .section-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+    .menu-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+    .item{padding:10px;border-radius:10px;border:1px solid #f0f0f0;display:flex;flex-direction:column}
+    .item h3{margin:0;font-size:15px}
+    .price{margin-top:6px;font-weight:700}
+    .controls{display:flex;gap:8px;margin-top:8px}
+    .btn{appearance:none;border:0;padding:8px 10px;border-radius:10px;background:#111;color:white;font-weight:600;cursor:pointer}
+    .btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--border)}
+
+    /* SIDEBAR (TRANSAKSI) */
+    .sidebar{position:sticky;top:18px}
+    .order-list{display:flex;flex-direction:column;gap:8px;max-height:420px;overflow:auto;padding-right:6px}
+    .order-row{display:flex;align-items:center;gap:8px;padding:8px;border-radius:10px;border:1px solid #f0f0f0}
+    .order-row .meta{flex:1}
+    .qty{display:inline-flex;align-items:center;border-radius:8px;overflow:hidden}
+    .qty button{width:30px;height:30px;border:0;background:transparent;font-weight:700}
+    .total{font-size:18px;font-weight:800}
+
+    .form-row{display:flex;gap:8px;margin-top:10px}
+    input[type=number], input[type=text]{padding:10px;border-radius:10px;border:1px solid var(--border);flex:1}
+
+    footer{margin-top:16px;text-align:center;color:var(--muted);font-size:13px}
+
+    /* receipt print */
+    @media print{
+      body *{visibility:hidden}
+      #receipt, #receipt *{visibility:visible}
+      #receipt{position:fixed;left:0;top:0;width:100%}
+    }
+
+    /* small helpers */
+    .muted{color:var(--muted)}
+    .flex{display:flex;align-items:center}
+    .spacer{flex:1}
+  </style>
 </head>
 <body>
-  <div class="container">
-    <!-- Tanggal dan Jam -->
-    <div class="tanggal-jam">
-      <p id="tanggal"></p>
-      <p id="jam"></p>
+  <header>
+    <div class="logo">NN</div>
+    <div>
+      <h1>Numpang Ngopi.CRB — Transaksi</h1>
+      <p class="lead">Menu & transaksi — kompatibel Android • elegant (abu / hitam / putih)</p>
     </div>
+  </header>
 
-    <h1>INFORMASI ANTRIAN NUMPANG NGOPI CRB</h1>
+  <main class="container">
+    <section>
+      <div class="card">
+        <div class="section-title">
+          <strong>Daftar Menu</strong>
+          <div class="muted">Pilih menu untuk menambahkan ke pesanan</div>
+        </div>
 
-    <!-- Tombol Aksi -->
-    <div class="button-group">
-      <button id="ambilAntrianBtn">AMBIL ANTRIAN BARU</button>
-      <button id="prosesAntrianBtn">PROSES ANTRIAN</button>
-      <button id="selesaiBtn">SELESAI</button>
-      <button id="resetBtn">RESET ANTRIAN</button>
-    </div>
+        <div id="menu" class="menu-grid" aria-live="polite">
+          <!-- items injected by JS -->
+        </div>
 
-    <!-- Informasi Antrian -->
-    <div class="info-box">
-      <div class="info-card">
-        <h2>Antrian yang Dilayani</h2>
-        <p id="antrianSaatIni">-</p>
+        <hr style="margin:12px 0;border:none;border-top:1px dashed var(--border)">
+        <details>
+          <summary style="cursor:pointer;padding:6px 0;font-weight:700">Tambah Menu Custom</summary>
+          <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+            <input id="newName" type="text" placeholder="Nama menu" />
+            <input id="newPrice" type="number" placeholder="Harga (mis: 16000)" />
+            <button class="btn" id="addCustom">Tambah</button>
+          </div>
+        </details>
       </div>
-      <div class="info-card">
-        <h2>Antrian Selesai</h2>
-        <p id="antrianSelesai">-</p>
-      </div>
-    </div>
 
-    <!-- Daftar Antrian Menunggu -->
-    <div class="queue-list">
-      <h2>Antrian Menunggu</h2>
-      <ul id="daftarAntrian"></ul>
+      <div class="card" style="margin-top:12px">
+        <strong>Catatan Pesanan</strong>
+        <p class="muted" style="margin-top:8px">(Opsional) Tulis catatan khusus untuk barista.</p>
+        <textarea id="notes" rows="3" style="width:100%;margin-top:8px;padding:10px;border-radius:10px;border:1px solid var(--border)"></textarea>
+      </div>
+    </section>
+
+    <aside class="sidebar">
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+          <strong>Keranjang</strong>
+          <div class="spacer"></div>
+          <button class="btn ghost" id="clearCart">Bersihkan</button>
+        </div>
+
+        <div class="order-list" id="orderList">
+          <!-- order rows -->
+        </div>
+
+        <div style="margin-top:12px">
+          <div class="form-row">
+            <div class="muted">Total</div>
+            <div class="total" id="totalText">Rp 0</div>
+          </div>
+
+          <div class="form-row" style="margin-top:8px">
+            <input type="number" id="payment" placeholder="Nominal Pembayaran (mis: 20000)" />
+            <button class="btn" id="payBtn">Hitung Kembali</button>
+          </div>
+
+          <div class="form-row" style="margin-top:8px">
+            <div class="muted">Kembali</div>
+            <div id="changeText" style="font-weight:700">Rp 0</div>
+          </div>
+
+          <div style="display:flex;gap:8px;margin-top:10px">
+            <button class="btn" id="printBtn">Cetak Struk</button>
+            <button class="btn ghost" id="saveLocal">Simpan Lokal</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:12px">
+        <strong>Informasi</strong>
+        <p class="muted" style="font-size:13px;margin-top:8px">Gunakan tombol + untuk menambah kuantitas. Anda bisa menambah menu custom jika perlu.</p>
+      </div>
+    </aside>
+  </main>
+
+  <footer>
+    Numpang Ngopi.CRB — Simple POS • dibuat untuk GitHub Pages
+  </footer>
+
+  <!-- receipt area (hidden, used for printing) -->
+  <div id="receipt" style="display:none;padding:18px;">
+    <div style="max-width:380px;margin:0 auto;background:white;padding:12px;border-radius:6px;border:1px solid var(--border);">
+      <div style="text-align:center">
+        <h2 style="margin:4px 0">Numpang Ngopi.CRB</h2>
+        <div class="muted">Jalan Imajinasi • Cirebon</div>
+        <hr style="margin:8px 0;border:none;border-top:1px dashed #ddd">
+      </div>
+      <div id="receiptBody"></div>
+      <hr style="margin:8px 0;border:none;border-top:1px dashed #ddd">
+      <div style="display:flex;justify-content:space-between;font-weight:700">
+        <div>Total</div>
+        <div id="receiptTotal">Rp 0</div>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:6px">
+        <div>Bayar</div>
+        <div id="receiptPay">Rp 0</div>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:6px">
+        <div>Kembali</div>
+        <div id="receiptChange">Rp 0</div>
+      </div>
+      <p style="text-align:center;margin-top:12px;font-size:12px;color:#666">Terima kasih sudah mampir! #KopibeneranKopi</p>
     </div>
   </div>
 
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-  <script src="script.js"></script>
+  <script>
+    // initial menu data (harga dalam rupiah)
+    const initialMenu = [
+      {category:'Classic Coffee', name:'Espresso (Single)', price:6000},
+      {category:'Classic Coffee', name:'Espresso (Double)', price:10000},
+      {category:'Classic Coffee', name:'Americano (Hot)', price:8000},
+      {category:'Classic Coffee', name:'Americano (Iced)', price:8000},
+      {category:'Classic Coffee', name:'Cappuccino', price:10000},
+      {category:'Classic Coffee', name:'Café Latte', price:10000},
+      {category:'Signature Coffee', name:'Aren Latte', price:10000},
+      {category:'Signature Coffee', name:'Caramel Latte', price:15000},
+      {category:'Signature Coffee', name:'Mocha Hazelnut', price:15000},
+      {category:'Signature Coffee', name:'Vanilla Sweet Latte', price:15000},
+      {category:'Signature Coffee', name:'Orange Espresso Sparkling', price:16000},
+      {category:'Non-Coffee', name:'Chocolate (Hot)', price:10000},
+      {category:'Non-Coffee', name:'Chocolate (Iced)', price:10000},
+      {category:'Non-Coffee', name:'Matcha Latte', price:16000},
+      {category:'Non-Coffee', name:'Red Velvet Latte', price:16000},
+      {category:'Non-Coffee', name:'Taro Latte', price:10000},
+      {category:'Non-Coffee', name:'Caramel', price:10000}
+    ];
+
+    // state
+    let menu = [...initialMenu];
+    const cart = [];
+
+    // helpers
+    const el = (q)=>document.querySelector(q);
+    const fmt = (n)=>{'use strict'; return 'Rp '+n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');}
+
+    function renderMenu(){
+      const container = el('#menu'); container.innerHTML='';
+      const groups = {};
+      menu.forEach((m,i)=>{ groups[m.category]=groups[m.category]||[]; groups[m.category].push({...m,id:i}); });
+      for(const cat of Object.keys(groups)){
+        const header = document.createElement('div'); header.style.gridColumn='1/-1'; header.innerHTML=`<strong style="display:block;margin-bottom:6px">${cat}</strong>`;
+        container.appendChild(header);
+        groups[cat].forEach(item=>{
+          const card = document.createElement('div'); card.className='item';
+          card.innerHTML=`<h3>${item.name}</h3><div class="price">${fmt(item.price)}</div><div class="controls"><button class="btn" data-id="${item.id}">Tambah</button></div>`;
+          container.appendChild(card);
+        });
+      }
+      // bind add buttons
+      container.querySelectorAll('button[data-id]').forEach(b=>{
+        b.addEventListener('click',()=>{
+          addToCart(menu[parseInt(b.dataset.id)]);
+        });
+      });
+    }
+
+    function addToCart(item){
+      // check if exists
+      const idx = cart.findIndex(c=>c.name===item.name && c.price===item.price);
+      if(idx>-1){ cart[idx].qty += 1; }
+      else{ cart.push({name:item.name,price:item.price,qty:1}); }
+      renderCart();
+    }
+
+    function renderCart(){
+      const list = el('#orderList'); list.innerHTML='';
+      cart.forEach((row,i)=>{
+        const r = document.createElement('div'); r.className='order-row';
+        r.innerHTML = `<div class="meta"><div style="font-weight:700">${row.name}</div><div class="muted">${fmt(row.price)}</div></div>
+          <div class="qty">
+            <button data-i="${i}" class="dec">–</button>
+            <div style="padding:0 10px">${row.qty}</div>
+            <button data-i="${i}" class="inc">+</button>
+          </div>
+          <div style="width:80px;text-align:right">${fmt(row.price * row.qty)}</div>
+          <button class="btn ghost rm" data-i="${i}">✕</button>`;
+        list.appendChild(r);
+      });
+
+      // bindings
+      list.querySelectorAll('.inc').forEach(b=>b.addEventListener('click',()=>{ cart[parseInt(b.dataset.i)].qty++; renderCart(); }));
+      list.querySelectorAll('.dec').forEach(b=>b.addEventListener('click',()=>{ const idx=parseInt(b.dataset.i); cart[idx].qty--; if(cart[idx].qty<=0) cart.splice(idx,1); renderCart(); }));
+      list.querySelectorAll('.rm').forEach(b=>b.addEventListener('click',()=>{ cart.splice(parseInt(b.dataset.i),1); renderCart(); }));
+
+      updateTotal();
+    }
+
+    function updateTotal(){
+      const total = cart.reduce((s,c)=>s + c.price*c.qty,0);
+      el('#totalText').textContent = fmt(total);
+    }
+
+    // add custom menu
+    el('#addCustom').addEventListener('click',()=>{
+      const name = el('#newName').value.trim(); const price = parseInt(el('#newPrice').value,10);
+      if(!name || !price || price<=0){ alert('Masukkan nama dan harga valid. Harga gunakan angka, mis: 12000'); return; }
+      menu.push({category:'Custom',name,price}); renderMenu(); el('#newName').value=''; el('#newPrice').value='';
+    });
+
+    el('#clearCart').addEventListener('click',()=>{ if(confirm('Bersihkan keranjang?')){ cart.length=0; renderCart(); } });
+
+    // payment & print
+    el('#payBtn').addEventListener('click',calcChange);
+    function calcChange(){
+      const total = cart.reduce((s,c)=>s + c.price*c.qty,0);
+      const payment = parseInt(el('#payment').value || '0',10);
+      const change = payment - total;
+      el('#changeText').textContent = fmt(Math.max(0,change));
+      return {total,payment,change};
+    }
+
+    // print
+    el('#printBtn').addEventListener('click',()=>{
+      const {total,payment,change} = calcChange();
+      if(total<=0){ alert('Keranjang kosong.'); return; }
+      // build receipt body
+      const body = cart.map(c=>`${c.qty} x ${c.name} \n ${fmt(c.price)} => ${fmt(c.qty*c.price)}`).join('\n');
+      const rb = el('#receiptBody'); rb.innerHTML='';
+      cart.forEach(c=>{
+        const div = document.createElement('div'); div.style.display='flex'; div.style.justifyContent='space-between'; div.style.marginBottom='6px';
+        div.innerHTML = `<div>${c.qty} x ${c.name}</div><div>${fmt(c.qty*c.price)}</div>`;
+        rb.appendChild(div);
+      });
+      el('#receiptTotal').textContent = fmt(total);
+      el('#receiptPay').textContent = fmt(payment);
+      el('#receiptChange').textContent = fmt(Math.max(0,change));
+      el('#receipt').style.display='block';
+      window.print();
+      setTimeout(()=>{ el('#receipt').style.display='none'; },500);
+    });
+
+    // save local (localStorage)
+    el('#saveLocal').addEventListener('click',()=>{
+      const data = {cart,notes:el('#notes').value,ts:new Date().toISOString()};
+      localStorage.setItem('nn_last_order', JSON.stringify(data));
+      alert('Pesanan disimpan lokal.');
+    });
+
+    // load menu and saved cart if present
+    function init(){ renderMenu(); const saved = localStorage.getItem('nn_last_order'); if(saved){ try{ const d=JSON.parse(saved); if(d.cart && d.cart.length){ if(confirm('Ada pesanan tersimpan lokal. Muat ulang ke keranjang?')){ cart.push(...d.cart); el('#notes').value = d.notes||''; renderCart(); } } }catch(e){} }
+    }
+    init();
+  </script>
 </body>
 </html>
